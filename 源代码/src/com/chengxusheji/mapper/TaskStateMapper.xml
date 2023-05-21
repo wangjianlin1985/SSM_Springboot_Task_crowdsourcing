@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.TaskStateMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加任务状态记录 -->
+	<insert id="addTaskState" parameterType="taskState">
+		insert into t_taskState(taskStateName) values 
+		(#{taskStateName})
+	</insert>
+
+	<!-- 按照查询条件分页查询任务状态记录 -->
+	<select id="queryTaskState" resultMap="taskStateMap" >
+		select t_taskState.* from t_taskState ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="taskStateMap" type="taskState">
+        <id property="taskStateId" column="taskStateId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有任务状态记录 -->
+	<select id="queryTaskStateList" resultMap="taskStateMap" >
+		select t_taskState.* from t_taskState ${where}
+	</select>
+
+    <!-- 按照查询条件的任务状态记录数 -->
+	<select id="queryTaskStateCount" resultType="int">
+		select count(*) from t_taskState ${where}
+	</select>
+
+	<!-- 根据主键查询某个任务状态记录 -->
+	<select id="getTaskState" parameterType="int" resultMap="taskStateMap">
+		select * from t_taskState where t_taskState.taskStateId = #{taskStateId}
+	</select>
+
+	<!-- 更新任务状态记录 -->
+	<update id="updateTaskState" parameterType="taskState">
+		update t_taskState set taskStateName=#{taskStateName} where taskStateId = #{taskStateId}
+	</update>
+
+	<!-- 删除任务状态记录 -->
+	<delete id="deleteTaskState" parameterType="int">
+		delete from t_taskState where taskStateId=#{taskStateId}
+	</delete>
+
+</mapper>

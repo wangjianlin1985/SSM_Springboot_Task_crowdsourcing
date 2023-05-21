@@ -1,0 +1,50 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.TaskGetMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加任务领取记录 -->
+	<insert id="addTaskGet" parameterType="taskGet">
+		insert into t_taskGet(taskObj,userObj,getTime,handleState,getTaskMemo) values 
+		(#{taskObj.taskId},#{userObj.user_name},#{getTime},#{handleState},#{getTaskMemo})
+	</insert>
+
+	<!-- 按照查询条件分页查询任务领取记录 -->
+	<select id="queryTaskGet" resultMap="taskGetMap" >
+		select t_taskGet.* from t_taskGet,t_task,t_userInfo ${where} and t_taskGet.taskObj = t_task.taskId and t_taskGet.userObj = t_userInfo.user_name limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="taskGetMap" type="taskGet">
+        <id property="taskGetId" column="taskGetId" />
+        <association property="taskObj" column="taskObj" select="com.chengxusheji.mapper.TaskMapper.getTask" />
+        <association property="userObj" column="userObj" select="com.chengxusheji.mapper.UserInfoMapper.getUserInfo" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有任务领取记录 -->
+	<select id="queryTaskGetList" resultMap="taskGetMap" >
+		select t_taskGet.* from t_taskGet,t_task,t_userInfo ${where} and t_taskGet.taskObj = t_task.taskId and t_taskGet.userObj = t_userInfo.user_name
+	</select>
+
+    <!-- 按照查询条件的任务领取记录数 -->
+	<select id="queryTaskGetCount" resultType="int">
+		select count(*) from t_taskGet,t_task,t_userInfo ${where} and t_taskGet.taskObj = t_task.taskId and t_taskGet.userObj = t_userInfo.user_name
+	</select>
+
+	<!-- 根据主键查询某个任务领取记录 -->
+	<select id="getTaskGet" parameterType="int" resultMap="taskGetMap">
+		select * from t_taskGet where t_taskGet.taskGetId = #{taskGetId}
+	</select>
+
+	<!-- 更新任务领取记录 -->
+	<update id="updateTaskGet" parameterType="taskGet">
+		update t_taskGet set taskObj=#{taskObj.taskId},userObj=#{userObj.user_name},getTime=#{getTime},handleState=#{handleState},getTaskMemo=#{getTaskMemo} where taskGetId = #{taskGetId}
+	</update>
+
+	<!-- 删除任务领取记录 -->
+	<delete id="deleteTaskGet" parameterType="int">
+		delete from t_taskGet where taskGetId=#{taskGetId}
+	</delete>
+
+</mapper>
